@@ -10,4 +10,5 @@ public class Controller1 {
     public String go(){
         return "/layouts/layout1";
     }
+
 }
