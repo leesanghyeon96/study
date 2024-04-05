@@ -32,26 +32,23 @@ public class SecurityConfig{
                 .headers((headers) -> headers
                         .addHeaderWriter(new XFrameOptionsHeaderWriter(
                                 XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
-
-                //로그인
-                .formLogin(formLogin ->
-                        formLogin
-                                .loginPage("/members/login")
-                                .loginProcessingUrl("/members/login") // 로그인 폼이 제출되는 URL
-                                .defaultSuccessUrl("/")
-                                .usernameParameter("email")
-                                .failureUrl("/members/login/error"))
-                .logout(logout ->
-                        logout
-                                .logoutRequestMatcher(new AntPathRequestMatcher("/members/logout"))
-                                .logoutSuccessUrl("/"))
                 //권한
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
                         .requestMatchers("/", "/members/**", "/item/**", "/images/**").permitAll()
                         //db의 role에 ADMIN이면 hasAuthority, ROLE_ADMIN이면 hasRole
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**","/admin/item/new").hasRole("ADMIN")
+                        .requestMatchers("/admin/**","/admin/item/new").hasAuthority("ADMIN")
                         .anyRequest().authenticated())
+                //로그인
+                .formLogin(formLogin -> formLogin
+                                .loginPage("/members/login")
+                                .defaultSuccessUrl("/")
+                                .usernameParameter("email")
+                                .failureUrl("/members/login/error"))
+                .logout(logout -> logout
+                                .logoutRequestMatcher(new AntPathRequestMatcher("/members/logout"))
+                                .logoutSuccessUrl("/"))
                 //인증되지 않은자
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint())

@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Entity
 @Getter @Setter
 @ToString
-public class Member {
+public class Member extends BaseEntity{
 
     // 나중에 Setter가 아닌 builder로 리펙토링하자
 
