@@ -39,6 +39,10 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 
+	//모델맵퍼 추가
+	implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.2.0'
+
+
 	//	querydsl
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
