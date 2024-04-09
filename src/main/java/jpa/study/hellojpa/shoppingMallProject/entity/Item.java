@@ -2,9 +2,11 @@ package jpa.study.hellojpa.shoppingMallProject.entity;
 
 import jakarta.persistence.*;
 import jpa.study.hellojpa.shoppingMallProject.constant.ItemSellStatus;
+import jpa.study.hellojpa.shoppingMallProject.dto.ItemFormDto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDateTime;
 
@@ -38,5 +40,14 @@ public class Item extends BaseEntity{
     // 아래의 시간은 BaseEntity적용으로 삭제
     //private LocalDateTime regTime; // 등록 시간
     //private LocalDateTime updateTime; // 수정 시간
+
+    // 상품 데이터 업데이트 로직
+    public void updateItem(ItemFormDto itemFormDto){
+        this.itemNm = itemFormDto.getItemNm();
+        this.price = itemFormDto.getPrice();
+        this.stockNumber = itemFormDto.getStockNumber();
+        this.itemDetail = itemFormDto.getItemDetail();
+        this.itemSellStatus = itemFormDto.getItemSellStatus();
+    }
 
 }
