@@ -34,11 +34,10 @@ public class SecurityConfig{
                                 XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
                 //권한
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
-                        .requestMatchers("/", "/members/**", "/item/**", "/images/**").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/img/**", "/", "/images/**",
+                                "/members/**", "/item/**", "/members/login").permitAll()
                         //db의 role에 ADMIN이면 hasAuthority, ROLE_ADMIN이면 hasRole
-                        .requestMatchers("/admin/**","/admin/item/new").hasRole("ADMIN")
-                        .requestMatchers("/admin/**","/admin/item/new").hasAuthority("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 //로그인
                 .formLogin(formLogin -> formLogin

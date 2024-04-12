@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jpa.study.hellojpa.shoppingMallProject.dto.ItemFormDto;
 import jpa.study.hellojpa.shoppingMallProject.dto.ItemImgDto;
 import jpa.study.hellojpa.shoppingMallProject.dto.ItemSearchDto;
+import jpa.study.hellojpa.shoppingMallProject.dto.MainItemDto;
 import jpa.study.hellojpa.shoppingMallProject.entity.Item;
 import jpa.study.hellojpa.shoppingMallProject.entity.ItemImg;
 import jpa.study.hellojpa.shoppingMallProject.repository.ItemImgRepository;
@@ -99,6 +100,12 @@ public class ItemService {
     public Page<Item> getAdminItemPage(ItemSearchDto itemSearchDto, Pageable pageable){
         //상품 조회 조건과 페이지 정보
         return itemRepository.getAdminItemPage(itemSearchDto, pageable);
+    }
+
+    //메인페이지에 보여줄 상품 데이터를 조회하는 메서드
+    @Transactional(readOnly = true)
+    public Page<MainItemDto> getMainItemPage(ItemSearchDto itemSearchDto, Pageable pageable){
+        return itemRepository.getMainItemPage(itemSearchDto, pageable);
     }
 
 }

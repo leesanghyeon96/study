@@ -7,8 +7,11 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jpa.study.hellojpa.shoppingMallProject.constant.ItemSellStatus;
 import jpa.study.hellojpa.shoppingMallProject.dto.ItemSearchDto;
+import jpa.study.hellojpa.shoppingMallProject.dto.MainItemDto;
+import jpa.study.hellojpa.shoppingMallProject.dto.QMainItemDto;
 import jpa.study.hellojpa.shoppingMallProject.entity.Item;
 import jpa.study.hellojpa.shoppingMallProject.entity.QItem;
+import jpa.study.hellojpa.shoppingMallProject.entity.QItemImg;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -90,6 +93,57 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
                 .fetchOne()
                 ;
 
+        return new PageImpl<>(content, pageable, total);
+    }
+
+
+    /*
+        메인페이지에서의 검색
+     */
+    private BooleanExpression itemNmLike(String searchQuery){
+        // 검색어가 null이 아니면 검색어가 포함되는 상품을 조회하는 조건을 반환
+        return StringUtils.isEmpty(searchQuery) ? null : QItem.item.itemNm.like("%" + searchQuery + "%");
+    }
+
+    // Query DSL : 엔티티 클래스의 QDomain 의 객체를 생성
+    //		-- 동적 쿼리를 적용 할 수 있다.  null이 반환이되면 처리하지 않고, null 아니면 처리하게된다.
+    // QDomain 의 엔티티 클래스를 생성 해야함.
+    // 사용할 Entity 클래스 이름 앞에 QItem , QItemImg
+
+    @Override
+    public Page<MainItemDto> getMainItemPage(ItemSearchDto itemSearchDto, Pageable pageable) {
+        QItem item = QItem.item;
+        QItemImg itemImg = QItemImg.itemImg;
+
+        List<MainItemDto> content = queryFactory
+                .select(
+                        new QMainItemDto(
+                                item.id,
+                                item.itemNm,
+                                item.itemDetail,
+                                itemImg.imgUrl,
+                                item.price)
+                )
+                .from(itemImg)
+                .join(itemImg.item, item)   //itemImg와 item을 내부조인
+                .where(itemImg.repimgYn.eq("Y"))    //대표 상품 이미지만 불러오기
+                .where(itemNmLike(itemSearchDto.getSearchQuery()))   //null 리턴되면 처리하지 않고, 그렇지 않으면 처리
+                .orderBy(item.id.desc())
+                .offset(pageable.getOffset())		//몇 번째 페이지를 가지고 올것인가.(0, 1, 2)
+                .limit(pageable.getPageSize())		//한 페이지에서 출력할 레코드 갯수  (6)
+                .fetch();
+
+        long total = queryFactory
+                .select(Wildcard.count)
+                .from(itemImg)
+                .join(itemImg.item, item)
+                .where(itemImg.repimgYn.eq("Y"))
+                .where(itemNmLike(itemSearchDto.getSearchQuery()))
+                .fetchOne()
+                ;
+
+        //Page인터페이스 : PageImpl 구현체
+        //List , Pageable, 레코드 총갯수 ;
         return new PageImpl<>(content, pageable, total);
     }
 }

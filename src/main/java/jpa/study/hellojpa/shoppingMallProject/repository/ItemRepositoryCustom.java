@@ -1,6 +1,7 @@
 package jpa.study.hellojpa.shoppingMallProject.repository;
 
 import jpa.study.hellojpa.shoppingMallProject.dto.ItemSearchDto;
+import jpa.study.hellojpa.shoppingMallProject.dto.MainItemDto;
 import jpa.study.hellojpa.shoppingMallProject.entity.Item;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,5 +11,8 @@ public interface ItemRepositoryCustom {
 
     //관리자 페이지에서 처리하는 검색어 구현
     Page<Item> getAdminItemPage(ItemSearchDto itemSearchDto, Pageable pageable);
+
+    // 메인 페이지에 보여줄 상품 리스트를 가져오는
+    Page<MainItemDto> getMainItemPage(ItemSearchDto itemSearchDto, Pageable pageable);
 
 }
