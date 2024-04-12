@@ -3,11 +3,14 @@ package jpa.study.hellojpa.shoppingMallProject.service;
 import jakarta.persistence.EntityNotFoundException;
 import jpa.study.hellojpa.shoppingMallProject.dto.ItemFormDto;
 import jpa.study.hellojpa.shoppingMallProject.dto.ItemImgDto;
+import jpa.study.hellojpa.shoppingMallProject.dto.ItemSearchDto;
 import jpa.study.hellojpa.shoppingMallProject.entity.Item;
 import jpa.study.hellojpa.shoppingMallProject.entity.ItemImg;
 import jpa.study.hellojpa.shoppingMallProject.repository.ItemImgRepository;
 import jpa.study.hellojpa.shoppingMallProject.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -89,6 +92,13 @@ public class ItemService {
         }
 
         return item.getId();
+    }
+
+    //상품 데이터를 조회하는 메서드
+    @Transactional(readOnly = true) //데이터의 수정이 일어나지 않으므로
+    public Page<Item> getAdminItemPage(ItemSearchDto itemSearchDto, Pageable pageable){
+        //상품 조회 조건과 페이지 정보
+        return itemRepository.getAdminItemPage(itemSearchDto, pageable);
     }
 
 }

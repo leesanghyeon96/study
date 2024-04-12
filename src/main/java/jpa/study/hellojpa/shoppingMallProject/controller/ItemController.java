@@ -3,8 +3,13 @@ package jpa.study.hellojpa.shoppingMallProject.controller;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jpa.study.hellojpa.shoppingMallProject.dto.ItemFormDto;
+import jpa.study.hellojpa.shoppingMallProject.dto.ItemSearchDto;
+import jpa.study.hellojpa.shoppingMallProject.entity.Item;
 import jpa.study.hellojpa.shoppingMallProject.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -93,5 +99,21 @@ public class ItemController {
 
         return "redirect:/";
     }
+
+    // 상품 관리 화면, 조회한 상품 데이터
+    @GetMapping(value = {"/admin/items", "/admin/items/{page}"})
+    public String itemManage(ItemSearchDto itemSearchDto, @PathVariable("page") Optional<Integer> page, Model model){
+
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 3);
+        Page<Item> items = itemService.getAdminItemPage(itemSearchDto, pageable); // 조회 조건과 페이징 번호
+
+        model.addAttribute("items", items);
+        // 페이지 전환 시 기존 검색 조건을 유지한채 이동할 수 있도록 뷰에 다시 전달
+        model.addAttribute("itemSearchDto", itemSearchDto);
+        model.addAttribute("maxPage", 5); // 보여줄 페이지 번호 최대 개수
+
+        return "item/itemMng";
+    }
+
 
 }
