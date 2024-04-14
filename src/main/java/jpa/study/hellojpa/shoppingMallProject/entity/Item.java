@@ -3,6 +3,7 @@ package jpa.study.hellojpa.shoppingMallProject.entity;
 import jakarta.persistence.*;
 import jpa.study.hellojpa.shoppingMallProject.constant.ItemSellStatus;
 import jpa.study.hellojpa.shoppingMallProject.dto.ItemFormDto;
+import jpa.study.hellojpa.shoppingMallProject.exception.OutOfStockException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -48,6 +49,15 @@ public class Item extends BaseEntity{
         this.stockNumber = itemFormDto.getStockNumber();
         this.itemDetail = itemFormDto.getItemDetail();
         this.itemSellStatus = itemFormDto.getItemSellStatus();
+    }
+
+    // 상품을 주문시 재고의 감소 로직
+    public void removeStock(int stockNumber){
+        int restStock = this.stockNumber - stockNumber;
+        if(restStock < 0){
+            throw new OutOfStockException("상품의 재고가 부족합니다. (현재 재고 수량: " +this.stockNumber + ")");
+        }
+        this.stockNumber = restStock;
     }
 
 }
